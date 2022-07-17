@@ -5,6 +5,7 @@
       <form @submit.prevent="submitMethod">
         <p>
           ['🍕','🍔','🍟','🌭','🍿','🥓','🍗','🌮','🥐'].<input
+            v-if="gameOn"
             type="submit_on_enter"
             v-model="userMethod"
           />
@@ -12,10 +13,13 @@
       </form>
     </div>
     <div>
-      <button @click="clientOrderMethod">Start game</button>
+      <h1 v-if="!gameOn">GAME OVER your score is {{ playerMoney.length }}</h1>
+      <button v-if="!gameOn" @click="fullHp">Start Game</button>
       <h2>Client: {{ clientDialog }}</h2>
-      <h2>You: Here is your order {{ arrOutput }}</h2>
+      <h2>You: {{ arrOutput }}</h2>
       <h2>Your lives: {{ playerLives.join('') }}</h2>
+      <h2>Time left: {{ playerTime.join('') }}</h2>
+      <p>Methods: at(index), pop(), shift(), splice(index,elements)</p>
       <h2>Your money: {{ playerMoney.join('') }}</h2>
     </div>
   </div>
@@ -40,7 +44,7 @@ export default {
         'I would kill for some ',
         'Gimme some ',
         'Gimme some of those ',
-        'Shut up and take my money for ',
+        'Let me have some ',
       ],
       userMethod: null,
       answer: null,
@@ -48,7 +52,8 @@ export default {
       tempArr: ['🍕', '🍔', '🍟', '🌭', '🍿', '🥓', '🍗', '🌮', '🥐'],
       arrOutput: null,
       previousOrder: null,
-      playerLives: ['💖', '💖', '💖'],
+      playerLives: [],
+      playerTime: [],
       playerMoney: [],
       gameOn: false,
     };
@@ -56,29 +61,43 @@ export default {
 
   methods: {
     submitMethod() {
+      if(this.userMethod == null){this.userMethod = "at(100)"}
       this.answer = `${JSON.stringify(this.gameArr)}.${this.userMethod}`;
-      this.arrOutput = eval(this.answer);
+      if (this.userMethod.length < 12 && !this.userMethod.includes('for') && !this.userMethod.includes('while') && !this.userMethod.includes(';')) {
+        this.arrOutput = eval(this.answer);
+      } else {
+        this.playerLives = [];
+      }
       if (Array.isArray(this.clientOrder)) {
         if (this.clientOrder.join(',') == this.arrOutput) {
           for (var i = 0; i < this.clientOrder.length; i++) {
             this.playerMoney.push('💰');
           }
+          this.clientHappy();
         } else {
           this.playerLives.shift();
+          this.clientAngry();
         }
       } else {
-        this.clientOrder == this.arrOutput
-          ? this.playerMoney.push('💰')
-          : this.playerLives.shift();
+        if (this.clientOrder == this.arrOutput) {
+          this.playerMoney.push('💰');
+          this.clientHappy();
+        } else {
+          this.playerLives.shift();
+          this.clientAngry();
+        }
       }
       if (this.playerLives.length < 1) {
         console.log('GAME OVER');
         this.gameOn = false;
       }
+      (this.userMethod = null), this.nextSequence();
     },
     clientOrderMethod() {
+      setTimeout(this.orderError, 500);
+      this.arrOutput = 'Working on it...';
       this.gameOn = true;
-      const typeOfOrder = Math.floor(Math.random() * 6);
+      const typeOfOrder = Math.floor(Math.random() * 4);
       switch (typeOfOrder) {
         case 0:
           // first item
@@ -95,7 +114,6 @@ export default {
           this.previousOrder = this.clientOrder;
           break;
         case 2:
-        case 3:
           // random item
           this.clientOrder = this.gameArr.at(
             Math.floor(Math.random() * this.gameArr.length)
@@ -104,7 +122,7 @@ export default {
           this.clientDialog = this.randomDialog() + this.clientOrder;
           this.previousOrder = this.clientOrder;
           break;
-        case 4:
+        case 3:
           //many items
           var start = Math.floor(Math.random() * (this.gameArr.length - 1));
           var end = 10;
@@ -120,11 +138,24 @@ export default {
         default:
       }
     },
+    nextSequence() {
+      if (this.gameOn) {
+        setTimeout(this.clientOrderMethod, 2500);
+      }
+    },
     randomDialog() {
       let dialogNumber = Math.ceil(
         Math.random() * (this.clientDialogs.length - 1)
       );
       return this.clientDialogs[dialogNumber];
+    },
+    clientHappy() {
+      this.clientDialog = 'Thank you 😁';
+      this.arrOutput = 'Enjoy your meal ' + this.arrOutput;
+    },
+    clientAngry() {
+      this.clientDialog = 'This is not what i wanted! 😡';
+      this.arrOutput = "I'm sorry " + this.arrOutput;
     },
     noRepeat(order) {
       if (order == this.previousOrder) {
@@ -134,11 +165,27 @@ export default {
         console.log(order + ' changed to ' + this.clientOrder);
       }
     },
+    fullHp() {
+      this.playerLives = ['💖', '💖', '💖'];
+      this.playerTime = ['⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳']
+      this.playerMoney = [];
+      this.clientOrderMethod();
+      while(this.gameOn){
+        setTimeout(this.playerTime.pop(), 4000);
+      }
+    },
+    orderError() {
+      if (
+        this.clientDialog == 'This is not what i wanted! 😡' ||
+        this.clientDialog == 'Thank you 😁'
+      ) {
+        this.nextSequence();
+      }
+    },
   },
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
@@ -157,5 +204,13 @@ a {
 .arr-box {
   transform: scale(2);
   margin-bottom: 5rem;
+}
+button {
+  border-radius: 0px;
+  transform: scale(2);
+  transition: 1s;
+}
+button:hover {
+  transform: scale(2.3);
 }
 </style>
