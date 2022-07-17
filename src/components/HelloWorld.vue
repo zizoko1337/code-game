@@ -170,9 +170,12 @@ export default {
       this.playerTime = ['⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳']
       this.playerMoney = [];
       this.clientOrderMethod();
-      while(this.gameOn){
-        setTimeout(this.playerTime.pop(), 4000);
-      }
+
+        setTimeout(this.timeDecrease, 4000);
+
+      },    
+    timeDecrease(){
+      this.playerTime.pop();
     },
     orderError() {
       if (
@@ -182,8 +185,9 @@ export default {
         this.nextSequence();
       }
     },
-  },
-};
+  }
+}
+
 </script>
 
 <style scoped>
