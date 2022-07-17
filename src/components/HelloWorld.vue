@@ -63,7 +63,7 @@ export default {
     submitMethod() {
       if(this.userMethod == null){this.userMethod = "at(100)"}
       this.answer = `${JSON.stringify(this.gameArr)}.${this.userMethod}`;
-      if (this.userMethod.length < 12 && !this.userMethod.includes('for') && !this.userMethod.includes('while') && !this.userMethod.includes(';')) {
+      if (this.userMethod.length < 15 && !this.userMethod.includes('for') && !this.userMethod.includes('while') && !this.userMethod.includes(';')) {
         this.arrOutput = eval(this.answer);
       } else {
         this.playerLives = [];
