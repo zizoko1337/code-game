@@ -140,7 +140,7 @@ export default {
     },
     nextSequence() {
       if (this.gameOn) {
-        setTimeout(this.clientOrderMethod, 2500);
+        setTimeout(this.clientOrderMethod, 1500);
       }
     },
     randomDialog() {
@@ -170,12 +170,28 @@ export default {
       this.playerTime = ['⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳']
       this.playerMoney = [];
       this.clientOrderMethod();
-
-        setTimeout(this.timeDecrease, 4000);
-
-      },    
+      setTimeout(this.timeDecrease, 4000);
+      setTimeout(this.timeDecrease, 8000);
+      setTimeout(this.timeDecrease, 12000);
+      setTimeout(this.timeDecrease, 16000);
+      setTimeout(this.timeDecrease, 20000);
+      setTimeout(this.timeDecrease, 24000);
+      setTimeout(this.timeDecrease, 28000);
+      setTimeout(this.timeDecrease, 32000);
+      setTimeout(this.timeDecrease, 36000);
+      setTimeout(this.timeDecrease, 40000);
+      setTimeout(this.timeDecrease, 44000);
+      setTimeout(this.timeDecrease, 48000);
+      setTimeout(this.timeDecrease, 52000);
+      setTimeout(this.timeDecrease, 56000);
+      setTimeout(this.timeDecrease, 60000);
+      setTimeout(this.gameOver, 60000);
+    },    
     timeDecrease(){
       this.playerTime.pop();
+    },
+    gameOver(){
+      this.playerLives = [];
     },
     orderError() {
       if (
