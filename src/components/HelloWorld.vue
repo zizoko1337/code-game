@@ -192,7 +192,7 @@ export default {
     timeDecrease(){
       setTimeout(() => {
         this.playerTime.pop();
-        if(this.playerLives.length == 0){
+        if(this.playerLives.length == 0 || this.playerTime.length == 0){
           this.playerTime = [];
           this.gameOver;
         }else{
