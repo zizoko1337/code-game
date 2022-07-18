@@ -13,19 +13,29 @@
       </form>
     </div>
     <div>
-      <h1 v-if="!gameOn">GAME OVER your score is {{ playerMoney.length }}</h1>
+      <h2 v-if="!gameOn">GAME OVER your score is {{ playerMoney.length }}</h2>
       <button v-if="!gameOn" @click="fullHp">Start Game</button>
       <h2>Client: {{ clientDialog }}</h2>
       <h2>You: {{ arrOutput }}</h2>
       <h2>Your lives: {{ playerLives.join('') }}</h2>
-      <h2>Time left: {{ playerTime.join('') }}</h2>
-      <p>Methods: at(index), pop(), shift(), splice(index,elements)</p>
+      <h2>Time left: {{ playerTime.join('') }}</h2> 
       <h2>Your money: {{ playerMoney.join('') }}</h2>
+      <button @click="toggleHelp">Help ❔</button>
+      <div v-if="helpVisible" class="help">
+        <h3>Use array methods to get clients their orders.</h3>
+        <p><span class="method-display">at(📌)</span>, 📌 = index of array</p>
+        <p><span class="method-display">shift()</span>, returns at first item of array.</p>
+        <p><span class="method-display">pop()</span>, returns last item of array</p>
+        <p><span class="method-display">splice(📌,💼)</span>, 📌 = index of array. 💼 = amount of items, you want to return</p>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import cashSound from '../assets/cash.mp3';
+import failSound from '../assets/fail.mp3';
+
 export default {
   name: 'HelloWorld',
   data() {
@@ -56,6 +66,9 @@ export default {
       playerTime: [],
       playerMoney: [],
       gameOn: false,
+      cashSound2: new Audio(cashSound),
+      failSound2: new Audio(failSound),
+      helpVisible: false,
     };
   },
 
@@ -63,10 +76,10 @@ export default {
     submitMethod() {
       if(this.userMethod == null){this.userMethod = "at(100)"}
       this.answer = `${JSON.stringify(this.gameArr)}.${this.userMethod}`;
-      if (this.userMethod.length < 15 && !this.userMethod.includes('for') && !this.userMethod.includes('while') && !this.userMethod.includes(';')) {
-        this.arrOutput = eval(this.answer);
+      if (/(pop|splice|at|shift)\(([0-9,-]+)?\)/.test(this.answer)) {
+        this.arrOutput = eval(this.answer); // Im going to jail for this 👮‍♂️👨‍💼👮‍♂️
       } else {
-        this.playerLives = [];
+        this.arrOutput = "🤪";
       }
       if (Array.isArray(this.clientOrder)) {
         if (this.clientOrder.join(',') == this.arrOutput) {
@@ -150,10 +163,12 @@ export default {
       return this.clientDialogs[dialogNumber];
     },
     clientHappy() {
+      this.cashSound2.play();
       this.clientDialog = 'Thank you 😁';
       this.arrOutput = 'Enjoy your meal ' + this.arrOutput;
     },
     clientAngry() {
+      this.failSound2.play();
       this.clientDialog = 'This is not what i wanted! 😡';
       this.arrOutput = "I'm sorry " + this.arrOutput;
     },
@@ -166,29 +181,24 @@ export default {
       }
     },
     fullHp() {
+      this.gameOn = true;
       this.playerLives = ['💖', '💖', '💖'];
       this.playerTime = ['⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳']
       this.playerMoney = [];
       this.clientOrderMethod();
-      setTimeout(this.timeDecrease, 4000);
-      setTimeout(this.timeDecrease, 8000);
-      setTimeout(this.timeDecrease, 12000);
-      setTimeout(this.timeDecrease, 16000);
-      setTimeout(this.timeDecrease, 20000);
-      setTimeout(this.timeDecrease, 24000);
-      setTimeout(this.timeDecrease, 28000);
-      setTimeout(this.timeDecrease, 32000);
-      setTimeout(this.timeDecrease, 36000);
-      setTimeout(this.timeDecrease, 40000);
-      setTimeout(this.timeDecrease, 44000);
-      setTimeout(this.timeDecrease, 48000);
-      setTimeout(this.timeDecrease, 52000);
-      setTimeout(this.timeDecrease, 56000);
-      setTimeout(this.timeDecrease, 60000);
-      setTimeout(this.gameOver, 60000);
+      this.timeDecrease();
+      //setTimeout(this.gameOver, 60000);
     },    
     timeDecrease(){
-      this.playerTime.pop();
+      setTimeout(() => {
+        this.playerTime.pop();
+        if(this.playerLives.length == 0){
+          this.playerTime = [];
+          this.gameOver;
+        }else{
+          this.timeDecrease(); 
+        }
+        }, 4000);
     },
     gameOver(){
       this.playerLives = [];
@@ -201,6 +211,9 @@ export default {
         this.nextSequence();
       }
     },
+    toggleHelp(){
+      this.helpVisible = !this.helpVisible;
+    }
   }
 }
 
@@ -208,29 +221,32 @@ export default {
 
 <style scoped>
 h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+  margin: 15px;
 }
 .arr-box {
   transform: scale(2);
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
 }
 button {
   border-radius: 0px;
   transform: scale(2);
   transition: 1s;
+  border: 2px solid rgb(76, 76, 76);
 }
 button:hover {
   transform: scale(2.3);
+}
+.hello {
+  display: flex;
+  flex-direction: column;
+}
+.method-display {
+  font-weight: 600;
+  color: black;
+}
+.help {
+  transform: translate(50%,15%);
+  width: 50%;
+  border: 3px solid rgb(76, 76, 76);
 }
 </style>
