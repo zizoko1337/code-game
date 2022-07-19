@@ -1,24 +1,9 @@
-# code-game
+<h1>McArray</h1>
+A coding game where you are working in fast food restaurant and serve food to clients using array methods like .at(), .shift(), .pop() and .splice()
 
-## Project setup
-```
-npm install
-```
+![image](https://user-images.githubusercontent.com/95056942/179859272-e46ca652-b5be-4e3a-b0c5-dca6d895a024.png)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+<h2>Inspired by Flexbox Froggy</h2>
+I wanted to create game that will help begginers understand how array methods work
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
