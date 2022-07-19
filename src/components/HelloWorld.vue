@@ -25,7 +25,7 @@
       <h2>Time left: {{ playerTime.join('') }}</h2>
       <h2>Your money: {{ playerMoney.join('') }}</h2>
       <button @click="toggleHelp">Help ❔</button> 
-      <button class="top-players-button" @click="sortPlayersByScores">Ranking 🏆</button>                 
+      <button class="top-players-button" @click="toggleRanking">Ranking 🏆</button>                 
       <div v-if="helpVisible" class="help">
         <h3>Use array methods to get clients their orders.</h3>
         <p><span class="method-display">at(📌)</span>, 📌 = index of array</p>
@@ -40,6 +40,14 @@
           <span class="method-display">splice(📌,💼)</span>, 📌 = index of
           array. 💼 = amount of items, you want to return
         </p>
+      </div>
+      <div v-if="rankingVisible" class="help">
+        <h3>🎺 Top 5 Players 🎺 </h3>
+        <p>🥇{{" " + topPlayers[0].name + " " + topPlayers[0].score + "💰"}}</p>
+        <p>🥈{{" " + topPlayers[1].name + " " + topPlayers[1].score + "💰"}}</p>
+        <p>🏅{{" " + topPlayers[2].name + " " + topPlayers[2].score + "💰"}}</p>
+        <p>🤝{{" " + topPlayers[3].name + " " + topPlayers[3].score + "💰"}}</p>
+        <p>🤝{{" " + topPlayers[4].name + " " + topPlayers[4].score + "💰"}}</p>
       </div>
     </div>              
   </div>
@@ -84,8 +92,9 @@ export default {
       failSound2: new Audio(failSound),
       helpVisible: false,
       firstStart: false,
+      rankingVisible: false,
       topPlayers: [
-        { name: 'test1', score: 5 },
+        { name: 'test1', score: 0 },
         { name: 'test2', score: 15 },
         { name: 'test3', score: 22 },
         { name: 'test4', score: 6 },
@@ -125,7 +134,6 @@ export default {
         }
       }
       if (this.playerLives.length < 1) {
-        console.log('GAME OVER');
         this.gameOn = false;
       }
       (this.userMethod = null), this.nextSequence();
@@ -240,6 +248,8 @@ export default {
           this.submitMethod();
           this.clientDialog = "Nevermind, it's too late ⌚";
           this.arrOutput = 'Time to go home 🚗';
+          console.log("check score here");
+          this.submitScore();
         } else {
           this.timeDecrease();
         }
@@ -258,9 +268,19 @@ export default {
     },
     toggleHelp() {
       this.helpVisible = !this.helpVisible;
+      this.rankingVisible = false;
+    },
+      toggleRanking() {
+      this.rankingVisible = !this.rankingVisible;
+      this.sortPlayersByScores();
+      this.helpVisible = false;
     },
     submitScore(){
-      
+      this.sortPlayersByScores();
+      if(this.playerMoney.length > this.topPlayers[4].score){
+        prompt("🎈 Congratulations 🎈 you are one of the top 5 players. Write your name and press submit to join the ranking","name");
+        console.log("can submit");
+      }
     },
     sortPlayersByScores(){
       this.topPlayers.sort((a, b) => (a.score > b.score) ? -1 : 1);
@@ -340,6 +360,12 @@ button:hover {
   }
   100% {
     transform: scale(1);
+  }
+}
+@media only screen and (max-width: 950px) {
+  .arr-box {
+    transform: scale(1.3);
+    margin-bottom: 2rem;
   }
 }
 </style>
