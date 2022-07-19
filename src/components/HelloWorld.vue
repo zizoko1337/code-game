@@ -13,23 +13,37 @@
       </form>
     </div>
     <div>
-      <h2 class="game-over" v-if="!gameOn && firstStart">GAME OVER your score is {{ playerMoney.length }}</h2>
-      <button class="start-button" v-if="!gameOn" @click="fullHp">Start Game</button>
+      <h2 class="game-over" v-if="!gameOn && firstStart">
+        GAME OVER your score is {{ playerMoney.length }}
+      </h2>
+      <button class="start-button" v-if="!gameOn" @click="fullHp">
+        Start Game
+      </button>
       <h2>Client: {{ clientDialog }}</h2>
       <h2>You: {{ arrOutput }}</h2>
       <h2>Your lives: {{ playerLives.join('') }}</h2>
-      <h2>Time left: {{ playerTime.join('') }}</h2> 
+      <h2>Time left: {{ playerTime.join('') }}</h2>
       <h2>Your money: {{ playerMoney.join('') }}</h2>
-      <button @click="toggleHelp">Help ❔</button>
+      <button @click="toggleHelp">Help ❔</button> 
+      <button class="top-players-button" @click="sortPlayersByScores">Ranking 🏆</button>                 
       <div v-if="helpVisible" class="help">
         <h3>Use array methods to get clients their orders.</h3>
         <p><span class="method-display">at(📌)</span>, 📌 = index of array</p>
-        <p><span class="method-display">shift()</span>, returns at first item of array.</p>
-        <p><span class="method-display">pop()</span>, returns last item of array</p>
-        <p><span class="method-display">splice(📌,💼)</span>, 📌 = index of array. 💼 = amount of items, you want to return</p>
+        <p>
+          <span class="method-display">shift()</span>, returns at first item of
+          array.
+        </p>
+        <p>
+          <span class="method-display">pop()</span>, returns last item of array
+        </p>
+        <p>
+          <span class="method-display">splice(📌,💼)</span>, 📌 = index of
+          array. 💼 = amount of items, you want to return
+        </p>
       </div>
-    </div>
+    </div>              
   </div>
+  
 </template>
 
 <script>
@@ -70,17 +84,26 @@ export default {
       failSound2: new Audio(failSound),
       helpVisible: false,
       firstStart: false,
+      topPlayers: [
+        { name: 'test1', score: 5 },
+        { name: 'test2', score: 15 },
+        { name: 'test3', score: 22 },
+        { name: 'test4', score: 6 },
+        { name: 'test5', score: 14 },
+      ],
     };
   },
 
   methods: {
     submitMethod() {
-      if(this.userMethod == null){this.userMethod = "at(100)"}
+      if (this.userMethod == null) {
+        this.userMethod = 'at(100)';
+      }
       this.answer = `${JSON.stringify(this.gameArr)}.${this.userMethod}`;
       if (/(pop|splice|at|shift)\(([0-9,-]+)?\)/.test(this.answer)) {
         this.arrOutput = eval(this.answer); // Im going to jail for this 👮‍♂️👨‍💼👮‍♂️
       } else {
-        this.arrOutput = "🤪";
+        this.arrOutput = '🤪';
       }
       if (Array.isArray(this.clientOrder)) {
         if (this.clientOrder.join(',') == this.arrOutput) {
@@ -169,7 +192,7 @@ export default {
       this.arrOutput = 'Enjoy your meal ' + this.arrOutput;
     },
     clientAngry() {
-      if(this.gameOn)this.failSound2.play();
+      if (this.gameOn) this.failSound2.play();
       this.clientDialog = 'This is not what i wanted! 😡';
       this.arrOutput = "I'm sorry " + this.arrOutput;
     },
@@ -185,28 +208,44 @@ export default {
       this.firstStart = true;
       this.gameOn = true;
       this.playerLives = ['💖', '💖', '💖'];
-      this.playerTime = ['⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳']
+      this.playerTime = [
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+        '⏳',
+      ];
       this.playerMoney = [];
       this.clientOrderMethod();
       this.timeDecrease();
-    },    
-    timeDecrease(){
+    },
+    timeDecrease() {
       setTimeout(() => {
         this.playerTime.pop();
-        if(this.playerLives.length == 0 || this.playerTime.length == 0){
+        if (this.playerLives.length == 0 || this.playerTime.length == 0) {
           this.playerTime = [];
           this.playerLives = [];
           this.gameOver;
           this.gameOn = false;
           this.submitMethod();
           this.clientDialog = "Nevermind, it's too late ⌚";
-          this.arrOutput = "Time to go home 🚗"
-        }else{
-          this.timeDecrease(); 
+          this.arrOutput = 'Time to go home 🚗';
+        } else {
+          this.timeDecrease();
         }
-        }, 4000);
+      }, 4000);
     },
-    gameOver(){
+    gameOver() {
       this.playerLives = [];
     },
     orderError() {
@@ -217,12 +256,18 @@ export default {
         this.nextSequence();
       }
     },
-    toggleHelp(){
+    toggleHelp() {
       this.helpVisible = !this.helpVisible;
+    },
+    submitScore(){
+      
+    },
+    sortPlayersByScores(){
+      this.topPlayers.sort((a, b) => (a.score > b.score) ? -1 : 1);
+      console.log(this.topPlayers);
     }
-  }
-}
-
+  },
+};
 </script>
 
 <style scoped>
@@ -238,7 +283,7 @@ button {
 button:hover {
   transform: scale(2.3);
 }
-.start-button{
+.start-button {
   margin-top: 1rem;
 }
 .arr-box {
@@ -255,13 +300,16 @@ button:hover {
   color: black;
 }
 .help {
-  transform: translate(50%,15%);
+  transform: translate(50%, 15%);
   width: 50%;
   border: 3px solid rgb(76, 76, 76);
 }
 .game-over {
   animation: hi-there 3s infinite;
   font-size: 3rem;
+}
+.top-players-button {
+  margin: 0 0 0 5rem;
 }
 
 /* animation keyframes */
@@ -277,10 +325,21 @@ button:hover {
   }
 }
 @keyframes hi-there {
-  30% { transform: scale(1.2); }
-  40%, 60% { transform: rotate(-20deg) scale(1.2); }
-  50% { transform: rotate(20deg) scale(1.2); }
-  70% { transform: rotate(0deg) scale(1.2); }
-  100% { transform: scale(1); }
+  30% {
+    transform: scale(1.2);
+  }
+  40%,
+  60% {
+    transform: rotate(-20deg) scale(1.2);
+  }
+  50% {
+    transform: rotate(20deg) scale(1.2);
+  }
+  70% {
+    transform: rotate(0deg) scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 </style>
