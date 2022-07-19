@@ -13,8 +13,8 @@
       </form>
     </div>
     <div>
-      <h2 v-if="!gameOn">GAME OVER your score is {{ playerMoney.length }}</h2>
-      <button v-if="!gameOn" @click="fullHp">Start Game</button>
+      <h2 class="game-over" v-if="!gameOn && firstStart">GAME OVER your score is {{ playerMoney.length }}</h2>
+      <button class="start-button" v-if="!gameOn" @click="fullHp">Start Game</button>
       <h2>Client: {{ clientDialog }}</h2>
       <h2>You: {{ arrOutput }}</h2>
       <h2>Your lives: {{ playerLives.join('') }}</h2>
@@ -69,6 +69,7 @@ export default {
       cashSound2: new Audio(cashSound),
       failSound2: new Audio(failSound),
       helpVisible: false,
+      firstStart: false,
     };
   },
 
@@ -109,7 +110,7 @@ export default {
     clientOrderMethod() {
       setTimeout(this.orderError, 500);
       this.arrOutput = 'Working on it...';
-      this.gameOn = true;
+      //this.gameOn = true;
       const typeOfOrder = Math.floor(Math.random() * 4);
       switch (typeOfOrder) {
         case 0:
@@ -168,7 +169,7 @@ export default {
       this.arrOutput = 'Enjoy your meal ' + this.arrOutput;
     },
     clientAngry() {
-      this.failSound2.play();
+      if(this.gameOn)this.failSound2.play();
       this.clientDialog = 'This is not what i wanted! 😡';
       this.arrOutput = "I'm sorry " + this.arrOutput;
     },
@@ -181,20 +182,25 @@ export default {
       }
     },
     fullHp() {
+      this.firstStart = true;
       this.gameOn = true;
       this.playerLives = ['💖', '💖', '💖'];
       this.playerTime = ['⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳']
       this.playerMoney = [];
       this.clientOrderMethod();
       this.timeDecrease();
-      //setTimeout(this.gameOver, 60000);
     },    
     timeDecrease(){
       setTimeout(() => {
         this.playerTime.pop();
         if(this.playerLives.length == 0 || this.playerTime.length == 0){
           this.playerTime = [];
+          this.playerLives = [];
           this.gameOver;
+          this.gameOn = false;
+          this.submitMethod();
+          this.clientDialog = "Nevermind, it's too late ⌚";
+          this.arrOutput = "Time to go home 🚗"
         }else{
           this.timeDecrease(); 
         }
@@ -223,10 +229,6 @@ export default {
 h3 {
   margin: 15px;
 }
-.arr-box {
-  transform: scale(2);
-  margin-bottom: 2rem;
-}
 button {
   border-radius: 0px;
   transform: scale(2);
@@ -236,7 +238,15 @@ button {
 button:hover {
   transform: scale(2.3);
 }
+.start-button{
+  margin-top: 1rem;
+}
+.arr-box {
+  transform: scale(2);
+  margin-bottom: 2rem;
+}
 .hello {
+  animation: roll-in 250ms ease;
   display: flex;
   flex-direction: column;
 }
@@ -248,5 +258,29 @@ button:hover {
   transform: translate(50%,15%);
   width: 50%;
   border: 3px solid rgb(76, 76, 76);
+}
+.game-over {
+  animation: hi-there 3s infinite;
+  font-size: 3rem;
+}
+
+/* animation keyframes */
+
+@keyframes roll-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%) rotate(-120deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0px) rotate(0deg);
+  }
+}
+@keyframes hi-there {
+  30% { transform: scale(1.2); }
+  40%, 60% { transform: rotate(-20deg) scale(1.2); }
+  50% { transform: rotate(20deg) scale(1.2); }
+  70% { transform: rotate(0deg) scale(1.2); }
+  100% { transform: scale(1); }
 }
 </style>
