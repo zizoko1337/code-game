@@ -278,8 +278,9 @@ export default {
     submitScore(){
       this.sortPlayersByScores();
       if(this.playerMoney.length > this.topPlayers[4].score){
-        prompt("🎈 Congratulations 🎈 you are one of the top 5 players. Write your name and press submit to join the ranking","name");
-        console.log("can submit");
+        this.topPlayers[4].score = this.playerMoney.length;
+        this.topPlayers[4].name = prompt("🎈 Congratulations 🎈 you are one of the top 5 players. Write your name and press submit to join the ranking","");
+        this.sortPlayersByScores();
       }
     },
     sortPlayersByScores(){
