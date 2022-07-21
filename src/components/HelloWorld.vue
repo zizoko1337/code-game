@@ -303,15 +303,20 @@ export default {
       this.topPlayers.sort((a, b) => (a.score > b.score ? -1 : 1));
       console.log(this.topPlayers);
     },
-    updateRanking(){
-      console.log('updating ranking')
-    }
+    updateRanking() {
+      for (let i = 0; i < 5; i++) {
+        axios.put(
+          `https://code-game-2fdea-default-rtdb.europe-west1.firebasedatabase.app/ranking/-N7X7PTf8SsPipSWYXQn/players/${i}.json`,
+          {
+            name: this.topPlayers[i].name,
+            score: this.topPlayers[i].score,
+          }
+        );
+      }
+      console.log('updating ranking');
+    },
   },
   mounted() {
-    //   axios.post('https://code-game-2fdea-default-rtdb.europe-west1.firebasedatabase.app/ranking.json', {
-    //   players: this.topPlayers,
-    // });
-
     axios
       .get(
         'https://code-game-2fdea-default-rtdb.europe-west1.firebasedatabase.app/ranking/-N7X7PTf8SsPipSWYXQn/players.json'
