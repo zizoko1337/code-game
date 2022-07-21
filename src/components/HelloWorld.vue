@@ -112,6 +112,7 @@ export default {
         { name: null, score: null },
         { name: null, score: null },
       ],
+      dbKey: null
     };
   },
 
@@ -306,7 +307,7 @@ export default {
     updateRanking() {
       for (let i = 0; i < 5; i++) {
         axios.put(
-          `https://code-game-2fdea-default-rtdb.europe-west1.firebasedatabase.app/ranking/-N7X7PTf8SsPipSWYXQn/players/${i}.json`,
+          `https://${this.dbKey}/ranking/-N7X7PTf8SsPipSWYXQn/players/${i}.json`,
           {
             name: this.topPlayers[i].name,
             score: this.topPlayers[i].score,
@@ -317,14 +318,16 @@ export default {
     },
   },
   mounted() {
+    this.dbKey = process.env.VUE_APP_DB;
     axios
       .get(
-        'https://code-game-2fdea-default-rtdb.europe-west1.firebasedatabase.app/ranking/-N7X7PTf8SsPipSWYXQn/players.json'
+        `https://${this.dbKey}/ranking/-N7X7PTf8SsPipSWYXQn/players.json`
       )
       .then((response) => {
         for (let i = 0; i < response.data.length; i++)
           this.topPlayers[i] = response.data[i];
       });
+      
   },
 };
 </script>
