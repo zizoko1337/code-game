@@ -24,8 +24,10 @@
       <h2>Your lives: {{ playerLives.join('') }}</h2>
       <h2>Time left: {{ playerTime.join('') }}</h2>
       <h2>Your money: {{ playerMoney.join('') }}</h2>
-      <button @click="toggleHelp">Help ❔</button> 
-      <button class="top-players-button" @click="toggleRanking">Ranking 🏆</button>                 
+      <button @click="toggleHelp">Help ❔</button>
+      <button class="top-players-button" @click="toggleRanking">
+        Ranking 🏆
+      </button>
       <div v-if="helpVisible" class="help">
         <h3>Use array methods to get clients their orders.</h3>
         <p><span class="method-display">at(📌)</span>, 📌 = index of array</p>
@@ -42,19 +44,29 @@
         </p>
       </div>
       <div v-if="rankingVisible" class="help">
-        <h3>🎺 Top 5 Players 🎺 </h3>
-        <p>🥇{{" " + topPlayers[0].name + " " + topPlayers[0].score + "💰"}}</p>
-        <p>🥈{{" " + topPlayers[1].name + " " + topPlayers[1].score + "💰"}}</p>
-        <p>🏅{{" " + topPlayers[2].name + " " + topPlayers[2].score + "💰"}}</p>
-        <p>🤝{{" " + topPlayers[3].name + " " + topPlayers[3].score + "💰"}}</p>
-        <p>🤝{{" " + topPlayers[4].name + " " + topPlayers[4].score + "💰"}}</p>
+        <h3>🎺 Top 5 Players 🎺</h3>
+        <p>
+          🥇{{ ' ' + topPlayers[0].name + ' ' + topPlayers[0].score + '💰' }}
+        </p>
+        <p>
+          🥈{{ ' ' + topPlayers[1].name + ' ' + topPlayers[1].score + '💰' }}
+        </p>
+        <p>
+          🏅{{ ' ' + topPlayers[2].name + ' ' + topPlayers[2].score + '💰' }}
+        </p>
+        <p>
+          🤝{{ ' ' + topPlayers[3].name + ' ' + topPlayers[3].score + '💰' }}
+        </p>
+        <p>
+          🤝{{ ' ' + topPlayers[4].name + ' ' + topPlayers[4].score + '💰' }}
+        </p>
       </div>
-    </div>              
+    </div>
   </div>
-  
 </template>
 
 <script>
+import axios from 'axios';
 import cashSound from '../assets/cash.mp3';
 import failSound from '../assets/fail.mp3';
 
@@ -94,11 +106,11 @@ export default {
       firstStart: false,
       rankingVisible: false,
       topPlayers: [
-        { name: 'test1', score: 0 },
-        { name: 'test2', score: 15 },
-        { name: 'test3', score: 22 },
-        { name: 'test4', score: 6 },
-        { name: 'test5', score: 14 },
+        { name: null, score: null },
+        { name: null, score: null },
+        { name: null, score: null },
+        { name: null, score: null },
+        { name: null, score: null },
       ],
     };
   },
@@ -248,7 +260,7 @@ export default {
           this.submitMethod();
           this.clientDialog = "Nevermind, it's too late ⌚";
           this.arrOutput = 'Time to go home 🚗';
-          console.log("check score here");
+          console.log('check score here');
           this.submitScore();
         } else {
           this.timeDecrease();
@@ -270,23 +282,44 @@ export default {
       this.helpVisible = !this.helpVisible;
       this.rankingVisible = false;
     },
-      toggleRanking() {
+    toggleRanking() {
       this.rankingVisible = !this.rankingVisible;
       this.sortPlayersByScores();
       this.helpVisible = false;
     },
-    submitScore(){
+    submitScore() {
       this.sortPlayersByScores();
-      if(this.playerMoney.length > this.topPlayers[4].score){
+      if (this.playerMoney.length > this.topPlayers[4].score) {
         this.topPlayers[4].score = this.playerMoney.length;
-        this.topPlayers[4].name = prompt("🎈 Congratulations 🎈 you are one of the top 5 players. Write your name and press submit to join the ranking","");
+        this.topPlayers[4].name = prompt(
+          '🎈 Congratulations 🎈 you are one of the top 5 players. Write your name and press submit to join the ranking',
+          ''
+        );
         this.sortPlayersByScores();
+        this.updateRanking();
       }
     },
-    sortPlayersByScores(){
-      this.topPlayers.sort((a, b) => (a.score > b.score) ? -1 : 1);
+    sortPlayersByScores() {
+      this.topPlayers.sort((a, b) => (a.score > b.score ? -1 : 1));
       console.log(this.topPlayers);
+    },
+    updateRanking(){
+      console.log('updating ranking')
     }
+  },
+  mounted() {
+    //   axios.post('https://code-game-2fdea-default-rtdb.europe-west1.firebasedatabase.app/ranking.json', {
+    //   players: this.topPlayers,
+    // });
+
+    axios
+      .get(
+        'https://code-game-2fdea-default-rtdb.europe-west1.firebasedatabase.app/ranking/-N7X7PTf8SsPipSWYXQn/players.json'
+      )
+      .then((response) => {
+        for (let i = 0; i < response.data.length; i++)
+          this.topPlayers[i] = response.data[i];
+      });
   },
 };
 </script>
