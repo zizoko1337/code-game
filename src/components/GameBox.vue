@@ -13,12 +13,8 @@
       </form>
     </div>
     <div>
-      <h2 class="game-over" v-if="!gameOn && firstStart">
-        GAME OVER your score is {{ playerMoney.length }}
-      </h2>
-      <button class="start-button" v-if="!gameOn" @click="fullHp">
-        Start Game
-      </button>
+      <h2 class="game-over" v-if="!gameOn && firstStart">GAME OVER your score is {{ playerMoney.length }}</h2>
+      <button class="start-button" v-if="!gameOn" @click="fullHp">Start Game</button>
       <h2>Client: {{ clientDialog }}</h2>
       <h2>You: {{ arrOutput }}</h2>
       <h2>Your lives: {{ playerLives.join('') }}</h2>
@@ -29,10 +25,7 @@
         Ranking 🏆
       </button>
       <HelpInstructions v-if="helpVisible"></HelpInstructions>
-      <PlayerRanking
-        v-if="rankingVisible"
-        :players="topPlayers"
-      ></PlayerRanking>
+      <PlayerRanking v-if="rankingVisible" :players="topPlayers"></PlayerRanking>
     </div>
     <p v-if="!helpVisible && !rankingVisible" class="made-by">made by <a href="https://github.com/zizoko1337/Code-game-McArray" target="_blank">mkcode</a></p>
   </div>
