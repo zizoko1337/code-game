@@ -43,8 +43,8 @@
           array. 💼 = amount of items, you want to return
         </p>
       </div>
-      <!-- <PlayerRanking v-if="rankingVisible" :players="topPlayers"></PlayerRanking> -->
-      <div v-if="rankingVisible" class="help">
+      <PlayerRanking v-if="rankingVisible" :players="topPlayers"></PlayerRanking>
+      <!-- <div v-if="rankingVisible" class="help">
         <h3>🎺 Top 5 Players 🎺</h3>
         <p>
           🥇{{ ' ' + topPlayers[0].name + ' ' + topPlayers[0].score + '💰' }}
@@ -61,7 +61,7 @@
         <p>
           🤝{{ ' ' + topPlayers[4].name + ' ' + topPlayers[4].score + '💰' }}
         </p>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
