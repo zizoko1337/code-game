@@ -28,41 +28,13 @@
       <button class="top-players-button" @click="toggleRanking">
         Ranking 🏆
       </button>
-      <div v-if="helpVisible" class="help">
-        <h3>Use array methods to get clients their orders.</h3>
-        <p><span class="method-display">at(📌)</span>, 📌 = index of array</p>
-        <p>
-          <span class="method-display">shift()</span>, returns at first item of
-          array.
-        </p>
-        <p>
-          <span class="method-display">pop()</span>, returns last item of array
-        </p>
-        <p>
-          <span class="method-display">splice(📌,💼)</span>, 📌 = index of
-          array. 💼 = amount of items, you want to return
-        </p>
-      </div>
-      <!-- <PlayerRanking v-if="rankingVisible" :players="topPlayers"></PlayerRanking> -->
-      <div v-if="rankingVisible" class="help">
-        <h3>🎺 Top 5 Players 🎺</h3>
-        <p>
-          🥇{{ ' ' + topPlayers[0].name + ' ' + topPlayers[0].score + '💰' }}
-        </p>
-        <p>
-          🥈{{ ' ' + topPlayers[1].name + ' ' + topPlayers[1].score + '💰' }}
-        </p>
-        <p>
-          🏅{{ ' ' + topPlayers[2].name + ' ' + topPlayers[2].score + '💰' }}
-        </p>
-        <p>
-          🤝{{ ' ' + topPlayers[3].name + ' ' + topPlayers[3].score + '💰' }}
-        </p>
-        <p>
-          🤝{{ ' ' + topPlayers[4].name + ' ' + topPlayers[4].score + '💰' }}
-        </p>
-      </div>
+      <HelpInstructions v-if="helpVisible"></HelpInstructions>
+      <PlayerRanking
+        v-if="rankingVisible"
+        :players="topPlayers"
+      ></PlayerRanking>
     </div>
+    <p v-if="!helpVisible && !rankingVisible" class="made-by">made by <a href="https://github.com/zizoko1337/Code-game-McArray" target="_blank">mkcode</a></p>
   </div>
 </template>
 
@@ -70,13 +42,15 @@
 import axios from 'axios';
 import cashSound from '../assets/cash.mp3';
 import failSound from '../assets/fail.mp3';
-// import PlayerRanking from "./PlayersRanking";
+import PlayerRanking from './options/PlayersRanking.vue';
+import HelpInstructions from './options/HelpInstructions.vue';
 
 export default {
   name: 'GameBox',
-  // modules: {
-  //   PlayerRanking,
-  // },
+  components: {
+    PlayerRanking,
+    HelpInstructions,
+  },
   data() {
     return {
       clientOrder: null,
@@ -117,12 +91,13 @@ export default {
         { name: null, score: null },
         { name: null, score: null },
       ],
-      dbKey: null
+      dbKey: null,
     };
   },
 
   methods: {
     submitMethod() {
+      // when player submits answer, checking if it is corrects and increasing score or removing hearts
       if (this.userMethod == null) {
         this.userMethod = 'at(100)';
       }
@@ -157,9 +132,9 @@ export default {
       (this.userMethod = null), this.nextSequence();
     },
     clientOrderMethod() {
-      setTimeout(this.orderError, 500);
+      // creating random orders
+      setTimeout(this.orderError, 500); // optional function but it might help if client order gets corrupted
       this.arrOutput = 'Working on it...';
-      //this.gameOn = true;
       const typeOfOrder = Math.floor(Math.random() * 4);
       switch (typeOfOrder) {
         case 0:
@@ -233,28 +208,13 @@ export default {
       this.firstStart = true;
       this.gameOn = true;
       this.playerLives = ['💖', '💖', '💖'];
-      this.playerTime = [
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-        '⏳',
-      ];
+      this.playerTime = ['⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳','⏳'];
       this.playerMoney = [];
       this.clientOrderMethod();
       this.timeDecrease();
     },
     timeDecrease() {
+      // manages time and stops game if time is over. player time = 60sec. 1⏳ = 4sec
       setTimeout(() => {
         this.playerTime.pop();
         if (this.playerLives.length == 0 || this.playerTime.length == 0) {
@@ -275,6 +235,7 @@ export default {
       this.playerLives = [];
     },
     orderError() {
+      // optional function that, does not allow client errors to happen
       if (
         this.clientDialog == 'This is not what i wanted! 😡' ||
         this.clientDialog == 'Thank you 😁'
@@ -299,6 +260,7 @@ export default {
           '🎈 Congratulations 🎈 you are one of the top 5 players. Write your name and press submit to join the ranking',
           ''
         );
+        if (this.topPlayers[4].name === '') this.topPlayers[4].name = 'Anon';
         this.sortPlayersByScores();
         this.updateRanking();
       }
@@ -319,16 +281,14 @@ export default {
     },
   },
   mounted() {
+    // loading ranking form data base
     this.dbKey = process.env.VUE_APP_DB;
     axios
-      .get(
-        `https://${this.dbKey}/ranking/-N7X7PTf8SsPipSWYXQn/players.json`
-      )
+      .get(`https://${this.dbKey}/ranking/-N7X7PTf8SsPipSWYXQn/players.json`)
       .then((response) => {
         for (let i = 0; i < response.data.length; i++)
           this.topPlayers[i] = response.data[i];
       });
-      
   },
 };
 </script>
@@ -346,6 +306,9 @@ button {
 button:hover {
   transform: scale(2.3);
 }
+
+/* custom classes */
+
 .start-button {
   margin-top: 1rem;
 }
@@ -358,15 +321,6 @@ button:hover {
   display: flex;
   flex-direction: column;
 }
-.method-display {
-  font-weight: 600;
-  color: black;
-}
-.help {
-  transform: translate(50%, 15%);
-  width: 50%;
-  border: 3px solid rgb(76, 76, 76);
-}
 .game-over {
   animation: hi-there 3s infinite;
   font-size: 3rem;
@@ -374,7 +328,10 @@ button:hover {
 .top-players-button {
   margin: 0 0 0 5rem;
 }
-
+.made-by{
+  font-size: 0.8rem;
+  margin-top: 20px;
+}
 /* animation keyframes */
 
 @keyframes roll-in {
@@ -405,6 +362,9 @@ button:hover {
     transform: scale(1);
   }
 }
+
+/* a little touch of responsiveness. This app will not be used on mobiles but still... */
+
 @media only screen and (max-width: 950px) {
   .arr-box {
     transform: scale(1.3);

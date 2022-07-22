@@ -21,7 +21,7 @@ export default {
   border: 3px solid rgb(76, 76, 76);
 }
 .method-display {
-  font-weight: 600; 
+  font-weight: 600;
   color: black;
 }
 </style>
