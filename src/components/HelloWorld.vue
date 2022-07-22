@@ -314,7 +314,6 @@ export default {
           }
         );
       }
-      console.log('updating ranking');
     },
   },
   mounted() {
