@@ -1,14 +1,14 @@
 <template>
-  <HelloWorld></HelloWorld>
+  <GameBox></GameBox>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import GameBox from './components/GameBox.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    GameBox
   },
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div class="game">
     <div class="arr-box">
       <h1>McArray menu</h1>
       <form @submit.prevent="submitMethod">
@@ -43,6 +43,7 @@
           array. 💼 = amount of items, you want to return
         </p>
       </div>
+      <!-- <PlayerRanking v-if="rankingVisible" :players="topPlayers"></PlayerRanking> -->
       <div v-if="rankingVisible" class="help">
         <h3>🎺 Top 5 Players 🎺</h3>
         <p>
@@ -69,9 +70,13 @@
 import axios from 'axios';
 import cashSound from '../assets/cash.mp3';
 import failSound from '../assets/fail.mp3';
+// import PlayerRanking from "./PlayersRanking";
 
 export default {
-  name: 'HelloWorld',
+  name: 'GameBox',
+  // modules: {
+  //   PlayerRanking,
+  // },
   data() {
     return {
       clientOrder: null,
@@ -222,7 +227,6 @@ export default {
         this.clientOrder = this.gameArr.at(
           Math.floor(Math.random() * this.gameArr.length)
         );
-        console.log(order + ' changed to ' + this.clientOrder);
       }
     },
     fullHp() {
@@ -261,7 +265,6 @@ export default {
           this.submitMethod();
           this.clientDialog = "Nevermind, it's too late ⌚";
           this.arrOutput = 'Time to go home 🚗';
-          console.log('check score here');
           this.submitScore();
         } else {
           this.timeDecrease();
@@ -302,7 +305,6 @@ export default {
     },
     sortPlayersByScores() {
       this.topPlayers.sort((a, b) => (a.score > b.score ? -1 : 1));
-      console.log(this.topPlayers);
     },
     updateRanking() {
       for (let i = 0; i < 5; i++) {
@@ -351,7 +353,7 @@ button:hover {
   transform: scale(2);
   margin-bottom: 2rem;
 }
-.hello {
+.game {
   animation: roll-in 250ms ease;
   display: flex;
   flex-direction: column;
